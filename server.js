@@ -3,7 +3,9 @@ var app = express();
 var rp = require('request-promise');
 const cheerio = require('cheerio')
 const tabletojson = require('tabletojson').Tabletojson;
-
+const mongoose = require('mongoose');
+var DayInfection = require('./models/infection.model');
+require('dotenv').config({path: __dirname + '/.env'})
 // set the port of our application
 // process.env.PORT lets the port be set by Heroku
 var port = process.env.PORT || 8080;
@@ -13,6 +15,10 @@ app.set('view engine', 'ejs');
 
 // make express look in the public directory for assets (css/js/img)
 app.use(express.static(__dirname + '/public'));
+
+
+// Set up mongoose connection
+const mongoDB = process.env.MONGODB_URI;
 
 
 let stateMap = new Map();
@@ -44,6 +50,39 @@ stateMap.set("West Bengal",[23.011,	87.658])
 // set the home page route
 app.get('/', function(req, res) {
     var largestInfected = 0;
+    var thisUpdate = new Date();
+    DayInfection.findOne({}).sort({updatedAt: -1}).exec(function(err,dayInf){
+       if(err) {
+        console.error(err);
+        res.render('index');
+       }
+       var innerArr = dayInf.infections;
+       var infectionArr = [];
+        for(var i in innerArr){
+            if(i > innerArr.length -3) {
+                continue;
+            }
+            console.log(innerArr[i].state)
+            var infection = innerArr[i].current;
+            if (infection > largestInfected){
+                largestInfected = infection;
+            }
+            if(stateMap.get(innerArr[i].state) === undefined) {
+                stateMap.set(innerArr[i].state,[18.98,	67.76])
+            }
+            stateMap.get(innerArr[i].state).push(infection);
+        }
+        console.log(largestInfected);
+         // ejs render automatically looks in the views folder
+         res.render('index',{states:stateMap, largestInfected: largestInfected});
+        //console.log(converted);
+    });
+
+
+});
+app.get('/2', function(req, res) {
+    var largestInfected = 0;
+    var thisUpdate = new Date();
     rp('https://www.mohfw.gov.in/')
     .then(function (htmlString) {
         $ = cheerio.load(htmlString)
@@ -51,6 +90,7 @@ app.get('/', function(req, res) {
        // console.log(obj.html())
        const converted = tabletojson.convert(obj.html());
        var innerArr = converted[0];
+       var infectionArr = [];
         for(var i in innerArr){
             if(i > innerArr.length -3) {
                 continue;
@@ -64,7 +104,24 @@ app.get('/', function(req, res) {
                 stateMap.set(innerArr[i]["Name of State / UT"],[18.98,	67.76])
             }
             stateMap.get(innerArr[i]["Name of State / UT"]).push(infection);
+            infectionArr.push( {
+                state: innerArr[i]["Name of State / UT"],
+                current: infection,
+                cured: parseInt(innerArr[i]["Cured/Discharged/Migrated"]),
+                death: parseInt(innerArr[i]["Death"])
+                
+            });
         }
+        var inf = new DayInfection({
+            infections: infectionArr,
+            updatedAt: thisUpdate
+        });
+    
+        inf.save(function (err) {
+            if (err) {
+                console.log(err)
+            }
+        });
         console.log(largestInfected);
          // ejs render automatically looks in the views folder
          res.render('index',{states:stateMap, largestInfected: largestInfected});
@@ -75,11 +132,15 @@ app.get('/', function(req, res) {
         console.error(err);
         res.render('index');
     });
-    
 
-   
 });
-
 app.listen(port, function() {
+    mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
+    mongoose.connection.once('open', () => {
+        console.info('Connected to Mongo via Mongoose');
+    });
+    mongoose.connection.on('error', (err) => {
+        console.error('Unable to connect to Mongo via Mongoose', err);
+    });
     console.log('Our app is running on http://localhost:' + port);
 });
