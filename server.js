@@ -52,13 +52,16 @@ app.get('/', function(req, res) {
        const converted = tabletojson.convert(obj.html());
        var innerArr = converted[0];
         for(var i in innerArr){
-            if(i > innerArr.length -2) {
+            if(i > innerArr.length -3) {
                 continue;
             }
             console.log(innerArr[i]["Name of State / UT"])
             var infection = parseInt(innerArr[i]["Total Confirmed cases (Indian National)"])+parseInt(innerArr[i]["Total Confirmed cases ( Foreign National )"]);
             if (infection > largestInfected){
                 largestInfected = infection;
+            }
+            if(stateMap.get(innerArr[i]["Name of State / UT"]) === undefined) {
+                stateMap.set(innerArr[i]["Name of State / UT"],[18.98,	67.76])
             }
             stateMap.get(innerArr[i]["Name of State / UT"]).push(infection);
         }
