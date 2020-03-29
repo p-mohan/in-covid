@@ -23,9 +23,12 @@ const mongoDB = process.env.MONGODB_URI;
 
 let stateMap = new Map();
 stateMap.set("Andhra Pradesh",[15.325,	78.611])
+stateMap.set("Andaman and Nicobar Islands",[12.468,	92.815])
 stateMap.set("Bihar",[25.66,86.257])
+stateMap.set("Chandigarh",[30.730,76.766])
 stateMap.set("Chhattisgarh",[22.267,	81.731])
 stateMap.set("Delhi",[28.62,	77.205])
+stateMap.set("Goa",[15.367,	73.968])
 stateMap.set("Gujarat",[22.43,	70.898])
 stateMap.set("Haryana",[29.112,	75.952])
 stateMap.set("Himachal Pradesh",[32.081,	76.853])
@@ -39,9 +42,8 @@ stateMap.set("Odisha",[20.444,	84.283])
 stateMap.set("Puducherry",[11.948,	79.697])
 stateMap.set("Punjab",[30.34,	75.094])
 stateMap.set("Rajasthan",[26.829,	73.622])
-stateMap.set("Tamil Nadu",[11.27,	78.038])
+stateMap.set("Tamil Nadu",[10.856,	79.426])
 stateMap.set("Telengana",[17.88,	79.11])
-stateMap.set("Chandigarh",[30.72,	76.75])
 stateMap.set("Jammu and Kashmir",[34.03,	76.288])
 stateMap.set("Ladakh",[34.402,	78.291])
 stateMap.set("Uttar Pradesh",[27.82, 79.721])
@@ -59,9 +61,6 @@ app.get('/', function(req, res) {
        var innerArr = dayInf.infections;
        var infectionArr = [];
         for(var i in innerArr){
-            if(i > innerArr.length -3) {
-                continue;
-            }
             console.log(innerArr[i].state)
             var infection = innerArr[i].current;
             if (infection > largestInfected){
@@ -92,11 +91,11 @@ app.get('/2', function(req, res) {
        var innerArr = converted[0];
        var infectionArr = [];
         for(var i in innerArr){
-            if(i > innerArr.length -3) {
+            if(i > innerArr.length -2) {
                 continue;
             }
             console.log(innerArr[i]["Name of State / UT"])
-            var infection = parseInt(innerArr[i]["Total Confirmed cases (Indian National)"])+parseInt(innerArr[i]["Total Confirmed cases ( Foreign National )"]);
+            var infection = parseInt(innerArr[i]["Total Confirmed cases *"]);
             if (infection > largestInfected){
                 largestInfected = infection;
             }
