@@ -1,3 +1,7 @@
 body    { padding-top:50px; }
 .container .jumbotron    { border-radius:20px; }
-#mapid { height: 800px;  }
+#mapid { height: 800px; }
+#div-1,
+#div-2 {
+  overflow-y: auto;
+}

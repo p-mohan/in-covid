@@ -5,6 +5,7 @@ const cheerio = require('cheerio')
 const tabletojson = require('tabletojson').Tabletojson;
 const mongoose = require('mongoose');
 var DayInfection = require('./models/infection.model');
+var SummaryInfection = require('./models/summary.model');
 require('dotenv').config({path: __dirname + '/.env'})
 // set the port of our application
 // process.env.PORT lets the port be set by Heroku
@@ -72,30 +73,45 @@ app.get('/', function(req, res) {
             stateMap.get(innerArr[i].state).push(infection);
         }
         console.log(largestInfected);
-         // ejs render automatically looks in the views folder
-         res.render('index',{states:stateMap, largestInfected: largestInfected});
+        var days = [];
+        var current = [];
+        SummaryInfection.find({}).sort({day: 1}).exec(function(err,dayInf){
+         //   console.log("dayInf",dayInf);
+            if(err) {
+             console.error(err);
+            }
+            for(var i in dayInf) {
+                days.push(dayInf[i].day.substring(dayInf[i].day.indexOf('-')+1));
+                current.push(dayInf[i].infections[0].current);
+            }
+            console.log("days",days);
+            // ejs render automatically looks in the views folder
+            res.render('index',{states:stateMap, largestInfected: largestInfected, days: days, current: current});
+        });
+       
         //console.log(converted);
     });
 
 
 });
-app.get('/2', function(req, res) {
+app.get('/update', function(req, res) {
     var largestInfected = 0;
     var thisUpdate = new Date();
     rp('https://www.mohfw.gov.in/')
     .then(function (htmlString) {
         $ = cheerio.load(htmlString)
-        obj = $('.content > div:nth-child(2)');
+        obj = $('#state-data > div > div > div > div');
        // console.log(obj.html())
        const converted = tabletojson.convert(obj.html());
        var innerArr = converted[0];
        var infectionArr = [];
+       let current = 0,cured = 0,death = 0;
         for(var i in innerArr){
             if(i > innerArr.length -2) {
                 continue;
             }
             console.log(innerArr[i]["Name of State / UT"])
-            var infection = parseInt(innerArr[i]["Total Confirmed cases *"]);
+            var infection = parseInt(innerArr[i]["Total Confirmed cases (Including 49 foreign Nationals)"]);
             if (infection > largestInfected){
                 largestInfected = infection;
             }
@@ -103,13 +119,16 @@ app.get('/2', function(req, res) {
                 stateMap.set(innerArr[i]["Name of State / UT"],[18.98,	67.76])
             }
             stateMap.get(innerArr[i]["Name of State / UT"]).push(infection);
-            infectionArr.push( {
-                state: innerArr[i]["Name of State / UT"],
-                current: infection,
-                cured: parseInt(innerArr[i]["Cured/Discharged/Migrated"]),
-                death: parseInt(innerArr[i]["Death"])
-                
-            });
+            var item = {
+            state: innerArr[i]["Name of State / UT"],
+            current: infection,
+            cured: parseInt(innerArr[i]["Cured/Discharged/Migrated"]),
+            death: parseInt(innerArr[i]["Death"])  }
+            console.log(item);
+            current += item.current;
+            cured += item.cured;
+            death += item.death;
+            infectionArr.push( item);
         }
         var inf = new DayInfection({
             infections: infectionArr,
@@ -121,10 +140,37 @@ app.get('/2', function(req, res) {
                 console.log(err)
             }
         });
-        console.log(largestInfected);
-         // ejs render automatically looks in the views folder
-         res.render('index',{states:stateMap, largestInfected: largestInfected});
-        //console.log(converted);
+       
+         SummaryInfection.update({age: thisUpdate.toISOString().slice(0,10)}, {
+            infections:  [{
+                state: "Total",
+                current: current,
+                cured: cured,
+                death: death        
+            }],
+            day: thisUpdate.toISOString().slice(0,10)
+        }, { upsert : true}, (err, doc) => {
+            if (err) {
+                console.log("Something wrong when updating data!");
+            }
+        
+            console.log(doc);
+        })
+        var days = [];
+         current = [];
+        SummaryInfection.find({}).sort({day: 1}).exec(function(err,dayInf){
+         //   console.log("dayInf",dayInf);
+            if(err) {
+             console.error(err);
+            }
+            for(var i in dayInf) {
+                days.push(dayInf[i].day.substring(dayInf[i].day.indexOf('-')+1));
+                current.push(dayInf[i].infections[0].current);
+            }
+            console.log("days",days);
+            // ejs render automatically looks in the views folder
+            res.render('index',{states:stateMap, largestInfected: largestInfected, days: days, current: current});
+        });
     })
     .catch(function (err) {
         // Crawling failed...

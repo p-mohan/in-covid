@@ -6,6 +6,7 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "chart.js": "^2.9.3",
     "cheerio": "^1.0.0-rc.3",
     "dotenv": "^8.2.0",
     "ejs": "^2.5.5",
