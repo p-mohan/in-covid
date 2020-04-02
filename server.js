@@ -111,7 +111,7 @@ app.get('/update', function(req, res) {
                 continue;
             }
             console.log(innerArr[i]["Name of State / UT"])
-            var infection = parseInt(innerArr[i]["Total Confirmed cases (Including 49 foreign Nationals)"]);
+            var infection = parseInt(innerArr[i]["Total Confirmed cases (Including 51 foreign Nationals)"]);
             if (infection > largestInfected){
                 largestInfected = infection;
             }
