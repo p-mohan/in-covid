@@ -25,6 +25,7 @@ const mongoDB = process.env.MONGODB_URI;
 let stateMap = new Map();
 stateMap.set("Andhra Pradesh",[15.325,	78.611])
 stateMap.set("Andaman and Nicobar Islands",[12.468,	92.815])
+stateMap.set("Assam",[26.629,92.546])
 stateMap.set("Bihar",[25.66,86.257])
 stateMap.set("Chandigarh",[30.730,76.766])
 stateMap.set("Chhattisgarh",[22.267,	81.731])
@@ -33,6 +34,7 @@ stateMap.set("Goa",[15.367,	73.968])
 stateMap.set("Gujarat",[22.43,	70.898])
 stateMap.set("Haryana",[29.112,	75.952])
 stateMap.set("Himachal Pradesh",[32.081,	76.853])
+stateMap.set("Jharkhand",[23.483,	85.302])
 stateMap.set("Karnataka",[14.731,	75.447])
 stateMap.set("Kerala",[10.421,	76.348])
 stateMap.set("Madhya Pradesh",[23.441,	77.183])
@@ -141,7 +143,7 @@ app.get('/update', function(req, res) {
             }
         });
        
-         SummaryInfection.update({age: thisUpdate.toISOString().slice(0,10)}, {
+         SummaryInfection.update({day: thisUpdate.toISOString().slice(0,10)}, {
             infections:  [{
                 state: "Total",
                 current: current,
