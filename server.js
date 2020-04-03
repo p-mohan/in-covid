@@ -25,6 +25,7 @@ const mongoDB = process.env.MONGODB_URI;
 let stateMap = new Map();
 stateMap.set("Andhra Pradesh",[15.325,	78.611])
 stateMap.set("Andaman and Nicobar Islands",[12.468,	92.815])
+stateMap.set("Arunachal Pradesh",[28.179,	94.688])
 stateMap.set("Assam",[26.629,92.546])
 stateMap.set("Bihar",[25.66,86.257])
 stateMap.set("Chandigarh",[30.730,76.766])
@@ -109,7 +110,7 @@ app.get('/update', function(req, res) {
        var infectionArr = [];
        let current = 0,cured = 0,death = 0;
         for(var i in innerArr){
-            if(i > innerArr.length -2) {
+            if(i > innerArr.length -3) {
                 continue;
             }
             console.log(innerArr[i]["Name of State / UT"])
