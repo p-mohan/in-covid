@@ -48,6 +48,7 @@ stateMap.set("Punjab",[30.34,	75.094])
 stateMap.set("Rajasthan",[26.829,	73.622])
 stateMap.set("Tamil Nadu",[10.856,	79.426])
 stateMap.set("Telengana",[17.88,	79.11])
+stateMap.set("Tripura",[23.795,	91.673])
 stateMap.set("Jammu and Kashmir",[34.03,	76.288])
 stateMap.set("Ladakh",[34.402,	78.291])
 stateMap.set("Uttar Pradesh",[27.82, 79.721])
@@ -114,7 +115,7 @@ app.get('/update', function(req, res) {
                 continue;
             }
             console.log(innerArr[i]["Name of State / UT"])
-            var infection = parseInt(innerArr[i]["Total Confirmed cases (Including 65 foreign Nationals)"]);
+            var infection = parseInt(innerArr[i]["Total Confirmed cases (Including 70 foreign Nationals)"]);
             if (infection > largestInfected){
                 largestInfected = infection;
             }
