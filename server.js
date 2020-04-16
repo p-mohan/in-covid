@@ -42,6 +42,7 @@ stateMap.set("Madhya Pradesh",[23.441,	77.183])
 stateMap.set("Maharashtra",[19.537,	74.809])
 stateMap.set("Manipur",[24.605,	93.618])
 stateMap.set("Mizoram",[23.474,	92.868])
+//stateMap.set("Nagaland",[26.152,	94.598])
 stateMap.set("Odisha",[20.444,	84.283])
 stateMap.set("Puducherry",[11.948,	79.697])
 stateMap.set("Punjab",[30.34,	75.094])
@@ -98,6 +99,7 @@ app.get('/', function(req, res) {
 
 
 });
+
 app.get('/update', function(req, res) {
     var largestInfected = 0;
     var thisUpdate = new Date();
@@ -111,11 +113,16 @@ app.get('/update', function(req, res) {
        var infectionArr = [];
        let current = 0,cured = 0,death = 0;
         for(var i in innerArr){
-            if(i > innerArr.length -3) {
+
+           // console.log(innerArr[i]["Name of State / UT"])
+           if (isNaN(innerArr[i]["S. No."])) {
+               continue;
+           }
+            console.log(Object.keys(innerArr[i])[2]);
+            var infection = parseInt(innerArr[i][Object.keys(innerArr[i])[2]]);
+            if(infection == 0) {
                 continue;
             }
-            console.log(innerArr[i]["Name of State / UT"])
-            var infection = parseInt(innerArr[i]["Total Confirmed cases (Including 70 foreign Nationals)"]);
             if (infection > largestInfected){
                 largestInfected = infection;
             }
