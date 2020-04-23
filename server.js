@@ -6,6 +6,7 @@ const tabletojson = require('tabletojson').Tabletojson;
 const mongoose = require('mongoose');
 var DayInfection = require('./models/infection.model');
 var SummaryInfection = require('./models/summary.model');
+var CronJob = require('cron').CronJob;
 require('dotenv').config({path: __dirname + '/.env'})
 // set the port of our application
 // process.env.PORT lets the port be set by Heroku
@@ -101,7 +102,8 @@ app.get('/', function(req, res) {
 
 });
 
-app.get('/update', function(req, res) {
+
+ function  update(res) {
     var largestInfected = 0;
     var thisUpdate = new Date();
     rp('https://www.mohfw.gov.in/')
@@ -170,7 +172,7 @@ app.get('/update', function(req, res) {
         })
         var days = [];
          current = [];
-        SummaryInfection.find({}).sort({day: 1}).exec(function(err,dayInf){
+        SummaryInfection.find({}).sort({day: 1}).exec( function(err,dayInf){
          //   console.log("dayInf",dayInf);
             if(err) {
              console.error(err);
@@ -181,14 +183,27 @@ app.get('/update', function(req, res) {
             }
             console.log("days",days);
             // ejs render automatically looks in the views folder
+            if(res != null)
             res.render('index',{states:stateMap, largestInfected: largestInfected, days: days, current: current});
-        });
+        })
+        
     })
     .catch(function (err) {
         // Crawling failed...
+        throw err;
+    });
+}
+
+app.get('/update', function(req, res) {
+        try {
+            // ejs render automatically looks in the views folder
+            update(res);
+        }
+    catch( err) {
+        // Crawling failed...
         console.error(err);
         res.render('index');
-    });
+    }
 
 });
 app.listen(port, function() {
@@ -201,3 +216,9 @@ app.listen(port, function() {
     });
     console.log('Our app is running on http://localhost:' + port);
 });
+
+var job = new CronJob("0 21 * * *", function () {
+    console.log("Running Cron Job");
+    update(null);
+}, null, true, 'Asia/Kolkata');
+job.start();

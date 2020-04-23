@@ -8,6 +8,7 @@
   "dependencies": {
     "chart.js": "^2.9.3",
     "cheerio": "^1.0.0-rc.3",
+    "cron": "^1.8.2",
     "dotenv": "^8.2.0",
     "ejs": "^2.5.5",
     "express": "^4.17.1",
