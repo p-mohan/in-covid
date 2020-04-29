@@ -129,15 +129,18 @@ app.get('/', function(req, res) {
             if (infection > largestInfected){
                 largestInfected = infection;
             }
-            if(stateMap.get(innerArr[i]["Name of State / UT"]) === undefined) {
-                stateMap.set(innerArr[i]["Name of State / UT"],[18.98,	67.76])
+            let state = innerArr[i]["Name of State / UT"];
+            state = state.replace(/[^a-zA-Z ]/g, "")
+            if(stateMap.get(state) === undefined) {
+                stateMap.set(state,[18.98,	67.76])
             }
-            stateMap.get(innerArr[i]["Name of State / UT"]).push(infection);
+            stateMap.get(state).push(infection);
             var item = {
-            state: innerArr[i]["Name of State / UT"],
+            state: state,
             current: infection,
-            cured: parseInt(innerArr[i]["Cured/Discharged/Migrated"]),
-            death: parseInt(innerArr[i]["Death"])  }
+            cured: parseInt(innerArr[i]["Cured/Discharged/Migrated"].replace(/[^0-9 ]/g, "")),
+            death: parseInt(innerArr[i]["Death"].replace(/[^0-9 ]/g, ""))  
+        }
             console.log(item);
             current += item.current;
             cured += item.cured;
