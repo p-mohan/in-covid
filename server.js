@@ -129,7 +129,7 @@ app.get('/', function(req, res) {
             if (infection > largestInfected){
                 largestInfected = infection;
             }
-            let state = innerArr[i]["Name of State / UT"];
+            let state = innerArr[i][Object.keys(innerArr[i])[1]];
             state = state.replace(/[^a-zA-Z ]/g, "")
             if(stateMap.get(state) === undefined) {
                 stateMap.set(state,[18.98,	67.76])
@@ -138,8 +138,8 @@ app.get('/', function(req, res) {
             var item = {
             state: state,
             current: infection,
-            cured: parseInt(innerArr[i]["Cured/Discharged/Migrated"].replace(/[^0-9 ]/g, "")),
-            death: parseInt(innerArr[i]["Death"].replace(/[^0-9 ]/g, ""))  
+            cured: parseInt(innerArr[i][Object.keys(innerArr[i])[3]].replace(/[^0-9 ]/g, "")),
+            death: parseInt(innerArr[i][Object.keys(innerArr[i])[4]].replace(/[^0-9 ]/g, ""))  
         }
             console.log(item);
             current += item.current;
