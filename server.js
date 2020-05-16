@@ -31,6 +31,7 @@ stateMap.set("Assam",[26.629,92.546])
 stateMap.set("Bihar",[25.66,86.257])
 stateMap.set("Chandigarh",[30.730,76.766])
 stateMap.set("Chhattisgarh",[22.267,	81.731])
+stateMap.set("Dadar Nagar Haveli",[20.179,	73.021])	
 stateMap.set("Delhi",[28.62,	77.205])
 stateMap.set("Goa",[15.367,	73.968])
 stateMap.set("Gujarat",[22.43,	70.898])
@@ -115,13 +116,13 @@ app.get('/', function(req, res) {
        var innerArr = converted[0];
        var infectionArr = [];
        let current = 0,cured = 0,death = 0;
-        for(var i in innerArr){
+       for (var i = 0; i < innerArr.length; i++){
 
-           // console.log(innerArr[i]["Name of State / UT"])
-           if (isNaN(innerArr[i]["S. No."])) {
+           let sn = innerArr[i]["S. No."];
+           if (!/^\d+?/.exec(sn)) {
                continue;
            }
-            console.log(Object.keys(innerArr[i])[2]);
+            console.log(">>>>>>>"+sn+"<<<<<<<<<<<<<<<<");
             var infection = parseInt(innerArr[i][Object.keys(innerArr[i])[2]]);
             if(infection == 0) {
                 continue;
