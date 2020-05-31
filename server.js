@@ -45,11 +45,12 @@ stateMap.set("Maharashtra",[19.537,	74.809])
 stateMap.set("Manipur",[24.605,	93.618])
 stateMap.set("Meghalaya",[25.573,	91.209])
 stateMap.set("Mizoram",[23.474,	92.868])
-//stateMap.set("Nagaland",[26.152,	94.598])
+stateMap.set("Nagaland",[26.152,	94.598])
 stateMap.set("Odisha",[20.444,	84.283])
 stateMap.set("Puducherry",[11.948,	79.697])
 stateMap.set("Punjab",[30.34,	75.094])
 stateMap.set("Rajasthan",[26.829,	73.622])
+stateMap.set("Sikkim",[27.558,	88.439])
 stateMap.set("Tamil Nadu",[10.856,	79.426])
 stateMap.set("Telengana",[17.88,	79.11])
 stateMap.set("Tripura",[23.795,	91.673])
@@ -118,12 +119,12 @@ app.get('/', function(req, res) {
        let current = 0,cured = 0,death = 0;
        for (var i = 0; i < innerArr.length; i++){
 
-           let sn = innerArr[i]["S. No."];
+           let sn = innerArr[i][Object.keys(innerArr[i])[0]]; //S. No
            if (!/^\d+?/.exec(sn)) {
                continue;
            }
             console.log(">>>>>>>"+sn+"<<<<<<<<<<<<<<<<");
-            var infection = parseInt(innerArr[i][Object.keys(innerArr[i])[2]]);
+            var infection = parseInt(innerArr[i][Object.keys(innerArr[i])[5]]);
             if(infection == 0) {
                 continue;
             }
