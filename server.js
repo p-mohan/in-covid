@@ -90,7 +90,14 @@ app.get('/', function(req, res) {
              console.error(err);
             }
             for(var i in dayInf) {
-                days.push(dayInf[i].day.substring(dayInf[i].day.indexOf('-')+1));
+                let date1 = dayInf[i].day;
+                let month = parseInt(date1.substring(date1.indexOf("-")+1,date1.lastIndexOf("-")))
+                if(month < 6) {
+                    let day = parseInt(date1.substring(date1.lastIndexOf("-")+1));
+                    if(!isOdd(day))
+                        continue;
+                }
+                days.push(date1.substring(date1.indexOf('-')+1));
                 current.push(dayInf[i].infections[0].current);
             }
             console.log("days",days);
@@ -104,6 +111,7 @@ app.get('/', function(req, res) {
 
 });
 
+function isOdd(num) { return num % 2;}
 
  function  update(res) {
     var largestInfected = 0;
