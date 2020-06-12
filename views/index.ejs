@@ -77,7 +77,7 @@
     color: 'red',
     fillColor: '#f03',
     fillOpacity: 0.5,
-    radius: <%= 150000 * states.get(state)[2]/largestInfected %>
+    radius: <%= 150000 * states.get(state)[2]/largestInfected %> //<%= states.get(state)[2] %>
 }); 
 
 circle.bindPopup("<%= state+": "+states.get(state)[2]%>").addTo(mymap);
