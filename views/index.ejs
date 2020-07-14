@@ -93,6 +93,7 @@ var days =  [
   <% } %>
 ""];
 var current =[ <%= current %>];
+var mortality =[ <%= mortality %>];
 $(document).ready(function(){
 var myChart = new Chart($("#myChart"), {
   type: 'line',
@@ -103,6 +104,12 @@ var myChart = new Chart($("#myChart"), {
         data: current,
         label: "Confirmed",
         borderColor: "#f03",
+        fill: false
+      },
+      { 
+        data: mortality,
+        label: "Mortality",
+        borderColor: "#000",
         fill: false
       }
     ]

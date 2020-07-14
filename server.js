@@ -84,6 +84,7 @@ app.get('/', function(req, res) {
         console.log(largestInfected);
         var days = [];
         var current = [];
+        var mortality = [];
         SummaryInfection.find({}).sort({day: 1}).exec(function(err,dayInf){
          //   console.log("dayInf",dayInf);
             if(err) {
@@ -92,17 +93,18 @@ app.get('/', function(req, res) {
             for(var i in dayInf) {
                 let date1 = dayInf[i].day;
                 let month = parseInt(date1.substring(date1.indexOf("-")+1,date1.lastIndexOf("-")))
-                if(month < 6) {
+                if(month < 7) {
                     let day = parseInt(date1.substring(date1.lastIndexOf("-")+1));
                     if(!isOdd(day))
                         continue;
                 }
                 days.push(date1.substring(date1.indexOf('-')+1));
                 current.push(dayInf[i].infections[0].current);
+                mortality.push(dayInf[i].infections[0].death);
             }
             console.log("days",days);
             // ejs render automatically looks in the views folder
-            res.render('index',{states:stateMap, largestInfected: largestInfected, days: days, current: current});
+            res.render('index',{states:stateMap, largestInfected: largestInfected, days: days, current: current, mortality: mortality});
         });
        
         //console.log(converted);
