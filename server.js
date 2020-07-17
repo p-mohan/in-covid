@@ -82,30 +82,7 @@ app.get('/', function(req, res) {
             stateMap.get(innerArr[i].state).push(infection);
         }
         console.log(largestInfected);
-        var days = [];
-        var current = [];
-        var mortality = [];
-        SummaryInfection.find({}).sort({day: 1}).exec(function(err,dayInf){
-         //   console.log("dayInf",dayInf);
-            if(err) {
-             console.error(err);
-            }
-            for(var i in dayInf) {
-                let date1 = dayInf[i].day;
-                let month = parseInt(date1.substring(date1.indexOf("-")+1,date1.lastIndexOf("-")))
-                if(month < 7) {
-                    let day = parseInt(date1.substring(date1.lastIndexOf("-")+1));
-                    if(!isOdd(day))
-                        continue;
-                }
-                days.push(date1.substring(date1.indexOf('-')+1));
-                current.push(dayInf[i].infections[0].current);
-                mortality.push(dayInf[i].infections[0].death);
-            }
-            console.log("days",days);
-            // ejs render automatically looks in the views folder
-            res.render('index',{states:stateMap, largestInfected: largestInfected, days: days, current: current, mortality: mortality});
-        });
+        fillSummaryInf(res,largestInfected);
        
         //console.log(converted);
     });
@@ -113,6 +90,33 @@ app.get('/', function(req, res) {
 
 });
 
+function fillSummaryInf(res,largestInfected){
+    var days = [];
+    var current = [];
+    var mortality = [];
+    SummaryInfection.find({}).sort({day: 1}).exec(function(err,dayInf){
+     //   console.log("dayInf",dayInf);
+        if(err) {
+         console.error(err);
+        }
+        for(var i in dayInf) {
+            let date1 = dayInf[i].day;
+            let month = parseInt(date1.substring(date1.indexOf("-")+1,date1.lastIndexOf("-")))
+            if(month < 7) {
+                let day = parseInt(date1.substring(date1.lastIndexOf("-")+1));
+                if(!isOdd(day))
+                    continue;
+            }
+            days.push(date1.substring(date1.indexOf('-')+1));
+            current.push(dayInf[i].infections[0].current);
+            mortality.push(dayInf[i].infections[0].death);
+        }
+        console.log("days",days);
+        // ejs render automatically looks in the views folder
+        res.render('index',{states:stateMap, largestInfected: largestInfected, days: days, current: current, mortality: mortality});
+    });
+
+}
 function isOdd(num) { return num % 2;}
 
  function  update(res) {
@@ -185,22 +189,7 @@ function isOdd(num) { return num % 2;}
         
             console.log(doc);
         })
-        var days = [];
-         current = [];
-        SummaryInfection.find({}).sort({day: 1}).exec( function(err,dayInf){
-         //   console.log("dayInf",dayInf);
-            if(err) {
-             console.error(err);
-            }
-            for(var i in dayInf) {
-                days.push(dayInf[i].day.substring(dayInf[i].day.indexOf('-')+1));
-                current.push(dayInf[i].infections[0].current);
-            }
-            console.log("days",days);
-            // ejs render automatically looks in the views folder
-            if(res != null)
-            res.render('index',{states:stateMap, largestInfected: largestInfected, days: days, current: current});
-        })
+        fillSummaryInf(res,largestInfected);
         
     })
     .catch(function (err) {
