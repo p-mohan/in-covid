@@ -114,7 +114,7 @@ function fillSummaryInf(res,largestInfected){
                 continue;
             }
             let dayofMonth = parseInt(date1.substring(date1.lastIndexOf("-")+1))
-            if(month < 7) {
+            if(month < 8) {
                 let day = parseInt(date1.substring(date1.lastIndexOf("-")+1));
                 if(!isOdd(day))
                     continue;
